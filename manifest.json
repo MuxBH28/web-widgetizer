@@ -1,0 +1,53 @@
+{
+    "manifest_version": 2,
+    "name": "WebWidgetizer",
+    "version": "1.0",
+    "description": "Opens specific links in a dedicated popup tab.",
+    "author": "M.Šehić",
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "storage"
+    ],
+    "browser_action": {
+        "default_popup": "html/popup.html",
+        "default_icon": {
+            "16": "images/icon16.png",
+            "48": "images/icon48.png",
+            "128": "images/icon128.png"
+        }
+    },
+    "commands": {
+        "open_link_in_new_window": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+S"
+            },
+            "description": "Open link in new window"
+        }
+    },
+    "options_ui": {
+        "page": "html/options.html",
+        "open_in_tab": true
+    },
+    "icons": {
+        "16": "images/icon16.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    },
+    "background": {
+        "scripts": [
+            "js/background.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*/*",
+                "http://*/*"
+            ],
+            "js": [
+                "js/content.js"
+            ]
+        }
+    ]
+}

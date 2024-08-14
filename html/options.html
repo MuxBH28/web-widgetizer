@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="../images/icon.png">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Web Widgetizer</title>
+</head>
+
+<body>
+    <section class="main-container">
+        <div>
+            <h1>🌐 Web Widgetizer <span version></span></h1>
+            <p>Opens specific links in a dedicated popup tab.</p>
+        </div>
+        <div>
+            <h2>⭐ Favourites</h2>
+            <p>Add or delete your favourite popup links.</p>
+            <hr>
+            <input type="text" placeholder="Link name" id="urlName">
+            <input type="text" placeholder="https://example.com/" id="urlInput">
+            <button id="saveButton">💾 Save</button>
+            <hr style="width: 30%;">
+            <div id="linksContainer">
+            </div>
+        </div>
+        <div>
+            <h2>⚙️ Settings</h2>
+            <p>Configure settings for WebWidgetizer</p>
+            <hr>
+            <p>Start at the start of browser: <span id="autostartButton">❌</span></p>
+            <p>Keyboard shortcut: <b>Ctrl+Shift+S</b></p>
+            <div>
+                <p>Popup width: <input type="number" id="popupWidth" min="0" max="3840"> px</p>
+                <p>Popup height: <input type="number" id="popupHeight" min="0" max="2160"> px</p>
+
+                <button id="saveSizeButton">🗔 Save size</button>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <button id="openPopUp">Open PopUp!</button>
+        <p>Web Widgetizer <span version></span> by: <a href="https://sehic.rf.gd/?referral=WebWidgetizer"
+                target="_blank">M.Šehić</a> - All
+            Rights Reserved © <span id="year"></span>.
+        </p>
+    </footer>
+    <script src="../js/scripts.js"></script>
+</body>
+
+</html>
