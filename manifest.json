@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "WebWidgetizer",
-    "version": "1.1",
+    "version": "1.0",
     "description": "Opens specific links in a dedicated popup tab.",
     "author": "M.Šehić",
     "permissions": [
@@ -20,7 +20,7 @@
     "commands": {
         "open_link_in_new_window": {
             "suggested_key": {
-                "default": "Ctrl+Shift+F1"
+                "default": "Ctrl+Shift+S"
             },
             "description": "Open link in new window"
         }

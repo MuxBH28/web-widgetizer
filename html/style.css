@@ -83,10 +83,8 @@ body {
 }
 
 #saveButton,
-#saveSizeButton,
-#exportButton,
-#importButton {
-    background-color: #0095c0;
+#saveSizeButton {
+    background-color: green;
     color: white;
     padding: 12px;
     border-radius: 6px;
@@ -97,10 +95,8 @@ body {
 }
 
 #saveButton:hover,
-#saveSizeButton:hover,
-#exportButton:hover,
-#importButton:hover {
-    scale: 1.1;
+#saveSizeButton:hover {
+    background-color: olivedrab;
 }
 
 #autostartButton {
