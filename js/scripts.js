@@ -91,6 +91,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+    document.getElementById('exportButton').addEventListener('click', exportLinks);
+    document.getElementById('importButton').addEventListener('click', function () {
+        document.getElementById('importFile').click();
+    });
+    document.getElementById('importFile').addEventListener('change', importLinks);
 });
 
 function saveLink() {
@@ -251,4 +256,51 @@ function selectLink(link) {
     }
 
     chrome.storage.local.set({ lastSelectedLink: lastSelectedLink });
+}
+function exportLinks() {
+    chrome.runtime.sendMessage({ action: 'loadLinks' }, function (response) {
+        if (response && response.links) {
+            const links = response.links;
+            const blob = new Blob([JSON.stringify(links, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'links.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } else {
+            alert('Failed to load links for export.');
+        }
+    });
+}
+
+function importLinks(event) {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/json') {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const links = JSON.parse(e.target.result);
+                if (Array.isArray(links)) {
+                    chrome.runtime.sendMessage({ action: 'importLinks', links: links }, function (response) {
+                        if (response && response.success) {
+                            loadLinks();
+                            alert('Links imported successfully.');
+                        } else {
+                            alert('Failed to import links.');
+                        }
+                    });
+                } else {
+                    alert('Invalid file format.');
+                }
+            } catch (error) {
+                alert('Error reading file.');
+            }
+        };
+        reader.readAsText(file);
+    } else {
+        alert('Please select a valid JSON file.');
+    }
 }
