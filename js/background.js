@@ -158,11 +158,26 @@ chrome.runtime.onInstalled.addListener(function () {
     });
 });
 
+chrome.contextMenus.create({
+    id: "add-to-web-widgetizer",
+    title: "Add to Web Widgetizer",
+    contexts: ["page", "selection", "link"]
+});
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === "add-to-web-widgetizer") {
+        chrome.tabs.sendMessage(tab.id, {
+            action: "addToWidgetizer",
+            url: info.pageUrl
+        });
+    }
+});
+
 function updateBadge() {
     chrome.storage.local.get(['favoriteLinks'], function (result) {
         const count = (result.favoriteLinks || []).length.toString();
-        chrome.browserAction.setBadgeText({ text: count });
-        chrome.browserAction.setBadgeBackgroundColor({ color: '#FF0000' });
+        chrome.action.setBadgeText({ text: count });
+        chrome.action.setBadgeBackgroundColor({ color: '#FF0000' });
     });
 }
 
