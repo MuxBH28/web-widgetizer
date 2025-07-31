@@ -53,7 +53,8 @@ Screenshots from Web Widgetizer
 
 ## Author
 
-- LinkedIn - [@Muhammed Šehić](https://www.linkedin.com/in/muhammed-%C5%A1ehi%C4%87-31a7b6175/)
-- GitHub - [@MuxBH28](https://github.com/MuxBH28)
-- Website - [www.sehic.rf.gd](https://sehic.rf.gd/)
-- Contact - [www.sehic.rf.gd/#contact](https://sehic.rf.gd/#contact)
+- **Created by**: MuxBH28
+- **Website**: [msehic.com](https://msehic.com)
+- **Email**: [sehicmuhammed7@proton.me](mailto:sehicmuhammed7@proton.me)
+- **GitHub**: [github.com/MuxBH28](https://github.com/MuxBH28)
+
