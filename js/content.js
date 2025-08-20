@@ -1,30 +1,32 @@
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if (message.action === 'modifyLinks') {
-        const links = document.querySelectorAll('a');
-        links.forEach(link => link.setAttribute('target', '_top'));
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "modifyLinks") {
+        document.querySelectorAll("a").forEach(link => link.setAttribute("target", "_top"));
+        sendResponse({ success: true });
+
+    } else if (message.action === "addToWidgetizer" && message.url) {
+        addPageToWidgetizer(message.url, sendResponse);
+        return true;
     }
 });
 
-chrome.runtime.onMessage.addListener(function (message) {
-    if (message.action === "addToWidgetizer") {
-        addPageToWidgetizer(message.url);
-    }
-});
-
-function addPageToWidgetizer(url) {
-    chrome.storage.local.get({ favoriteLinks: [] }, function (data) {
+function addPageToWidgetizer(url, sendResponse) {
+    chrome.storage.local.get({ favoriteLinks: [] }, (data) => {
         const favoriteLinks = data.favoriteLinks;
-        if (!favoriteLinks.includes(url)) {
-            favoriteLinks.push(url);
-            chrome.storage.local.set({ favoriteLinks }, function () {
+
+        if (!favoriteLinks.some(link => link.url === url)) {
+            favoriteLinks.push({ name: url, url });
+            chrome.storage.local.set({ favoriteLinks }, () => {
                 if (!chrome.runtime.lastError) {
-                    console.log("Link dodan u Web Widgetizer:", url);
+                    console.log("✅ Link added to Web Widgetizer:", url);
+                    sendResponse({ success: true });
                 } else {
-                    console.error("Greška pri dodavanju linka:", chrome.runtime.lastError);
+                    console.error("❌ Error adding link:", chrome.runtime.lastError);
+                    sendResponse({ success: false, error: "Error adding link" });
                 }
             });
         } else {
-            console.log("Link je već dodat.");
+            console.log("⚠️ Link already exists:", url);
+            sendResponse({ success: false, error: "Link already exists" });
         }
     });
 }

@@ -46,10 +46,10 @@ Screenshots from Web Widgetizer
   - JavaScript
 
 ## Links
-- Website - [www.sehic.rf.gd](https://sehic.rf.gd/)
+- Website - [msehic.com](https://msehic.com)
 - Firefox Download - [www.addons.mozilla.org/en-US/firefox/addon/webwidgetizer/](https://addons.mozilla.org/en-US/firefox/addon/webwidgetizer/)
 - Opera Download - [www.addons.opera.com/en/extensions/details/web-widgetizer/](https://addons.opera.com/en/extensions/details/web-widgetizer/)
-- Contact - [www.sehic.rf.gd/#contact](https://sehic.rf.gd/#contact)
+- Contact - [msehic.com/contact](https://msehic.com/contact)
 
 ## Author
 
