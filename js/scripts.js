@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const year = new Date().getFullYear();
     const yearElement = document.getElementById("year");
-    yearElement.textContent = (year === 2024) ? year : `2024 - ${year}`;
+    yearElement.textContent = `2024 - ${year}`;
 
     document.getElementById('saveButton').addEventListener('click', saveLink);
     document.getElementById('openPopUp').addEventListener('click', () => {
@@ -85,27 +85,34 @@ function displayLinks(links) {
 
     links.forEach((link, index) => {
         const linkElement = document.createElement('div');
-        linkElement.style.borderBottom = "1px solid #3f4043";
-        linkElement.style.paddingBottom = "10px";
-        linkElement.style.marginBottom = "10px";
+        linkElement.className = 'options-link-card';
 
-        const nameEl = document.createElement('p');
-        nameEl.textContent = 'Name: ' + link.name;
+        const dataLine = document.createElement('div');
+        dataLine.className = 'card-data';
+
+        const metaLine = document.createElement('div');
+        metaLine.className = 'meta-line';
+
+        const titleEl = document.createElement('span');
+        titleEl.className = 'title';
+        titleEl.textContent = link.name;
+        metaLine.appendChild(titleEl);
+
         if (link.tag) {
             const tagSpan = document.createElement('span');
             tagSpan.className = 'tag-badge';
-            tagSpan.style.marginLeft = "10px";
             tagSpan.textContent = link.tag;
-            nameEl.appendChild(tagSpan);
+            metaLine.appendChild(tagSpan);
         }
 
         const urlEl = document.createElement('p');
-        urlEl.textContent = 'URL: ' + link.url;
+        urlEl.className = 'url';
+        urlEl.textContent = link.url;
 
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'deleteButton';
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', () => deleteLink(index));
+        dataLine.append(metaLine, urlEl);
+
+        const actionsLine = document.createElement('div');
+        actionsLine.className = 'card-actions';
 
         const selectButton = document.createElement('button');
         selectButton.className = 'selectButton';
@@ -129,7 +136,13 @@ function displayLinks(links) {
             openLinkInNewWindow(link.url);
         });
 
-        linkElement.append(nameEl, deleteButton, selectButton, urlEl);
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'deleteButton';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => deleteLink(index));
+
+        actionsLine.append(selectButton, deleteButton);
+        linkElement.append(dataLine, actionsLine);
         container.appendChild(linkElement);
     });
 }
@@ -165,7 +178,7 @@ function saveSize() {
 
     chrome.storage.local.set({ popupWidth: width, popupHeight: height });
     button.textContent = 'Saved';
-    setTimeout(() => button.textContent = '🗔 Save size', 2000);
+    setTimeout(() => button.textContent = 'Update Dimensions', 2000);
 }
 
 function toggleAutostart() {
