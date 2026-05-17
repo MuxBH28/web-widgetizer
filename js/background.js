@@ -1,11 +1,14 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     switch (message.action) {
-
         case 'modifyLinks':
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                chrome.tabs.sendMessage(tabs[0].id, { action: 'modifyLinks' }, response => {
-                    sendResponse(response);
-                });
+                if (tabs[0]?.id) {
+                    chrome.tabs.sendMessage(tabs[0].id, { action: 'modifyLinks' }, response => {
+                        sendResponse(response);
+                    });
+                } else {
+                    sendResponse({ success: false, error: 'No active tab' });
+                }
             });
             return true;
 
@@ -23,12 +26,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             deleteLink(message.index, sendResponse);
             return true;
 
-        case 'exportLinks':
-            exportLinks(sendResponse);
-            return true;
-
         case 'importLinks':
-            importLinks(message.file, sendResponse);
+            importLinks(message.links, sendResponse);
             return true;
 
         default:
@@ -41,13 +40,8 @@ function saveLink(newLink, sendResponse) {
         const favoriteLinks = data.favoriteLinks;
         favoriteLinks.push(newLink);
         chrome.storage.local.set({ favoriteLinks }, () => {
-            if (!chrome.runtime.lastError) {
-                updateBadge();
-                sendResponse({ success: true });
-            } else {
-                console.error('Error saving link:', chrome.runtime.lastError);
-                sendResponse({ success: false, error: 'Error saving link' });
-            }
+            updateBadge();
+            sendResponse({ success: true });
         });
     });
 }
@@ -58,13 +52,8 @@ function deleteLink(index, sendResponse) {
         if (index >= 0 && index < favoriteLinks.length) {
             favoriteLinks.splice(index, 1);
             chrome.storage.local.set({ favoriteLinks }, () => {
-                if (!chrome.runtime.lastError) {
-                    updateBadge();
-                    sendResponse({ success: true });
-                } else {
-                    console.error('Error deleting link:', chrome.runtime.lastError);
-                    sendResponse({ success: false, error: 'Error deleting link' });
-                }
+                updateBadge();
+                sendResponse({ success: true });
             });
         } else {
             sendResponse({ success: false, error: 'Invalid index' });
@@ -72,46 +61,19 @@ function deleteLink(index, sendResponse) {
     });
 }
 
-function exportLinks(sendResponse) {
+function importLinks(importedLinks, sendResponse) {
+    if (!Array.isArray(importedLinks)) {
+        sendResponse({ success: false, error: 'Invalid format' });
+        return;
+    }
     chrome.storage.local.get({ favoriteLinks: [] }, data => {
-        const blob = new Blob([JSON.stringify(data.favoriteLinks, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'favoriteLinks.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        sendResponse({ success: true });
+        const favoriteLinks = data.favoriteLinks;
+        favoriteLinks.push(...importedLinks);
+        chrome.storage.local.set({ favoriteLinks }, () => {
+            updateBadge();
+            sendResponse({ success: true });
+        });
     });
-}
-
-function importLinks(file, sendResponse) {
-    const reader = new FileReader();
-    reader.onload = e => {
-        try {
-            const importedLinks = JSON.parse(e.target.result);
-            if (!Array.isArray(importedLinks)) throw new Error('Invalid format');
-            chrome.storage.local.get({ favoriteLinks: [] }, data => {
-                const favoriteLinks = data.favoriteLinks;
-                favoriteLinks.push(...importedLinks);
-                chrome.storage.local.set({ favoriteLinks }, () => {
-                    if (!chrome.runtime.lastError) {
-                        updateBadge();
-                        sendResponse({ success: true });
-                    } else {
-                        console.error('Error importing links:', chrome.runtime.lastError);
-                        sendResponse({ success: false, error: 'Error importing links' });
-                    }
-                });
-            });
-        } catch (err) {
-            console.error('Error parsing imported links:', err);
-            sendResponse({ success: false, error: 'Error parsing imported links' });
-        }
-    };
-    reader.readAsText(file);
 }
 
 chrome.commands.onCommand.addListener(command => {
@@ -121,51 +83,42 @@ chrome.commands.onCommand.addListener(command => {
             if (lastSelectedLink) {
                 chrome.windows.create({
                     url: lastSelectedLink,
-                    width: popupWidth,
-                    height: popupHeight,
+                    width: parseInt(popupWidth),
+                    height: parseInt(popupHeight),
+                    type: 'popup',
                     focused: true
                 });
-            } else console.error('No link is selected.');
+            } else {
+                console.error('No link is selected.');
+            }
         });
     }
 });
 
-chrome.contextMenus.create({
-    id: 'add-to-web-widgetizer',
-    title: 'Add to Web Widgetizer',
-    contexts: ['page', 'selection', 'link']
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.contextMenus.create({
+        id: 'add-to-web-widgetizer',
+        title: 'Add to Web Widgetizer',
+        contexts: ['page', 'selection', 'link']
+    });
+    updateBadge();
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === 'add-to-web-widgetizer') {
-        chrome.tabs.sendMessage(tab.id, { action: 'addToWidgetizer', url: info.pageUrl });
+    if (info.menuItemId === 'add-to-web-widgetizer' && tab?.id) {
+        chrome.tabs.sendMessage(tab.id, { action: 'addToWidgetizer', url: info.pageUrl || info.linkUrl });
     }
 });
 
 function updateBadge() {
-    chrome.storage.local.get(['favoriteLinks'], data => {
-        const count = (data.favoriteLinks || []).length.toString();
-        chrome.browserAction.setBadgeText({ text: count });
-        chrome.browserAction.setBadgeBackgroundColor({ color: '#FF0000' });
-    });
-}
-
-function openLastSelectedLink() {
-    chrome.storage.local.get(['lastSelectedLink', 'popupWidth', 'popupHeight'], data => {
-        const { lastSelectedLink, popupWidth = 800, popupHeight = 600 } = data;
-        if (lastSelectedLink) {
-            chrome.windows.create({
-                url: lastSelectedLink,
-                width: popupWidth,
-                height: popupHeight,
-                focused: true
-            });
-        }
+    chrome.storage.local.get({ favoriteLinks: [] }, data => {
+        const count = data.favoriteLinks.length.toString();
+        chrome.action.setBadgeText({ text: count === '0' ? '' : count });
+        chrome.action.setBadgeBackgroundColor({ color: '#0095c0' });
     });
 }
 
 chrome.runtime.onStartup.addListener(updateBadge);
-chrome.runtime.onInstalled.addListener(updateBadge);
 chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local' && changes.favoriteLinks) updateBadge();
 });

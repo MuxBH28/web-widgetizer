@@ -10,20 +10,38 @@
 </head>
 
 <body class="popup">
-    <h2>WebWidgetizer</h2>
-    <p>Opens specific links in a dedicated popup tab.</p>
-    <button id="openButton">🪟 Open popup</button>
-    <button id="saveSiteButton">💾 Save this site</button>
-    <button id="optionsButton">⚙️ Options</button><br>
-    <hr>
-    <h3>Saved Links</h3>
-    <ul id="linksList"></ul>
-    <hr>
-    <p>
-        <a href="https://msehic.com/" target="_blank">Author</a> |
-        <a href="#" id="shareLink">Share</a> |
-        <a href="https://www.buymeacoffee.com/sehic" target="_blank">Coffee?</a>
-    </p>
+    <header class="popup-header">
+        <h2>🌐 WebWidgetizer</h2>
+        <p>Open sites in dedicated widget tabs</p>
+    </header>
+
+    <section class="actions-grid">
+        <button id="openButton" class="btn-primary">🪟 Open</button>
+        <button id="saveSiteButton" class="btn-secondary">💾 Save This Site</button>
+        <button id="optionsButton" class="btn-icon">⚙️</button>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="search-container">
+        <input type="text" id="searchInput" placeholder="🔍 Search links or tags..." class="standard-input">
+    </section>
+
+    <main class="links-section">
+        <h3>Saved Widgets</h3>
+        <ul id="linksList" class="styled-list custom-scroll"></ul>
+    </main>
+
+    <div class="divider"></div>
+
+    <footer class="popup-footer">
+        <a href="https://msehic.com/" target="_blank">M.Šehić</a>
+        <span>&bull;</span>
+        <a href="#" id="shareLink">Share</a>
+        <span>&bull;</span>
+        <a href="https://github.com/sponsors/MuxBH28/" target="_blank">Support Dev</a>
+    </footer>
+
     <script src="../js/popup.js"></script>
 </body>
 

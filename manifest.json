@@ -1,16 +1,22 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "WebWidgetizer",
-    "version": "1.4",
+    "version": "2.0",
     "description": "Opens specific links in a dedicated popup tab.",
     "author": "M.Šehić",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{2f00030f-9869-45d5-b8ce-11b5c01ded5c}",
+            "strict_min_version": "109.0"
+        }
+    },
     "permissions": [
         "tabs",
         "activeTab",
         "storage",
         "contextMenus"
     ],
-    "browser_action": {
+    "action": {
         "default_popup": "html/popup.html",
         "default_icon": {
             "16": "images/icon16.png",
@@ -38,8 +44,7 @@
     "background": {
         "scripts": [
             "js/background.js"
-        ],
-        "persistent": true
+        ]
     },
     "content_scripts": [
         {

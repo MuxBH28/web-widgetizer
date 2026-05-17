@@ -2,72 +2,122 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" href="../images/icon.png">
+    <link class="icon" href="../images/icon.png">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="style.css">
-    <title>Web Widgetizer</title>
+    <title>Web Widgetizer - Settings</title>
 </head>
 
-<body>
-    <section class="main-container">
-        <div>
-            <h1>🌐 Web Widgetizer <span version></span></h1>
-            <p>Opens specific links in a dedicated popup tab.</p>
-        </div>
-        <div>
-            <h2>⭐ Favourites</h2>
-            <p>Add or delete your favourite popup links.</p>
-            <hr>
-            <input type="text" placeholder="Link name" id="urlName">
-            <input type="text" placeholder="https://example.com/" id="urlInput">
-            <button id="saveButton">💾 Save</button>
-            <hr style="width: 30%;">
-            <div id="linksContainer">
+<body class="options-body">
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <span class="logo-icon">🌐</span>
+                <div>
+                    <h1>Web Widgetizer</h1>
+                    <p class="subtitle">Extension Settings &bull; v<span version></span></p>
+                </div>
             </div>
-            <button id="exportButton">📥 Export Links</button>
-            <input type="file" id="importFile" style="display:none;" />
-            <button id="importButton">📤 Import Links</button>
-        </div>
-        <div>
-            <h2>⚙️ Settings</h2>
-            <p>Configure settings for WebWidgetizer</p>
-            <hr>
-            <p>Start at the start of browser: <span id="autostartButton">❌</span></p>
-            <p>Keyboard shortcut: <b>Ctrl+Shift+F1</b></p>
-            <div>
-                <p>Popup width: <input type="number" id="popupWidth" min="100" max="3840"> px</p>
-                <p>Popup height: <input type="number" id="popupHeight" min="100" max="2160"> px</p>
+            <button id="openPopUp" class="btn-primary">Launch Active Window</button>
+        </header>
 
-                <button id="saveSizeButton">🗔 Save size</button>
-            </div>
+        <div class="panel-layout">
+            <main class="panel-main">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h2>Widget Registry</h2>
+                    </div>
+
+                    <div class="input-matrix">
+                        <div class="input-row">
+                            <input type="text" placeholder="Widget Name" id="urlName" class="standard-input">
+                            <input type="text" placeholder="Tag / Category" id="urlTag" class="standard-input">
+                        </div>
+                        <input type="text" placeholder="Target URL (https://...)" id="urlInput" class="standard-input">
+                        <button id="saveButton" class="btn-primary btn-full">Save to Registry</button>
+                    </div>
+
+                    <div class="registry-divider"></div>
+
+                    <div id="linksContainer" class="custom-scroll"></div>
+
+                    <div class="system-actions">
+                        <button id="exportButton" class="btn-secondary">Export Configuration</button>
+                        <input type="file" id="importFile" style="display:none;" />
+                        <button id="importButton" class="btn-secondary">Import Configuration</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="panel-side">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h2>Preferences</h2>
+                    </div>
+
+                    <div class="toggle-tile">
+                        <div>
+                            <span class="tile-label">Launch on Startup</span>
+                            <small>Open automatically with browser</small>
+                        </div>
+                        <span id="autostartButton" class="status-toggle">❌</span>
+                    </div>
+
+                    <div class="toggle-tile">
+                        <div>
+                            <span class="tile-label">Global Shortcut</span>
+                            <small>Trigger trigger panel instantly</small>
+                        </div>
+                        <kbd class="pro-kbd">Ctrl+Shift+Y</kbd>
+                    </div>
+
+                    <div class="registry-divider"></div>
+
+                    <h3>Window Dimensions</h3>
+
+                    <div class="matrix-grid">
+                        <div class="matrix-field">
+                            <label>Width</label>
+                            <div class="unit-box">
+                                <input type="number" id="popupWidth" min="100" max="3840" class="standard-input">
+                                <span class="unit">px</span>
+                            </div>
+                        </div>
+                        <div class="matrix-field">
+                            <label>Height</label>
+                            <div class="unit-box">
+                                <input type="number" id="popupHeight" min="100" max="2160" class="standard-input">
+                                <span class="unit">px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="saveSizeButton" class="btn-secondary btn-full">Update Dimensions</button>
+                </div>
+
+                <div class="content-card info-card">
+                    <div class="card-header">
+                        <h2>Resources</h2>
+                    </div>
+                    <ul class="info-links">
+                        <li><a href="https://msehic.com/contact" target="_blank">Contact Developer</a></li>
+                        <li><a href="https://github.com/MuxBH28/web-widgetizer" target="_blank">GitHub Repository</a>
+                        </li>
+                        <li><a href="https://addons.mozilla.org/en-US/firefox/addon/webwidgetizer/"
+                                target="_blank">Firefox Add-on</a></li>
+                        <li><a href="https://www.mozilla.org/en-US/MPL/2.0/" target="_blank">Mozilla MPL 2.0</a></li>
+                    </ul>
+                </div>
+            </aside>
         </div>
-        <div>
-            <h2>🔗 Links</h2>
-            <p>If You want to get in touch - <a href="https://msehic.com/contact" target="_blank">✉️ Contact</a></p>
-            <p>Want to see add-ons page - <a href="https://addons.mozilla.org/en-US/firefox/addon/webwidgetizer/"
-                    target="_blank">🦊 Firefox
-                    Add-ons</a></p>
-            <p>Want this extension for Opera? - <a href="https://addons.opera.com/en/extensions/details/web-widgetizer/"
-                    target="_blank">⭕ Opera
-                    Add-ons</a>*</p>
-            <p>Source code available on - <a href="https://github.com/MuxBH28/web-widgetizer" target="_blank">📂
-                    GitHub</a>
-            <p>What license? This one: <a href="https://www.mozilla.org/en-US/MPL/2.0/" target="_blank">📝 MPL 2.0</a>
-            </p>
-            <hr>
-            <small>*Development for Opera browsers has stopped and is unlikely to continue.</small>
-        </div>
-    </section>
-    <footer>
-        <button id="openPopUp">Open PopUp!</button>
-        <p>Web Widgetizer <span version></span> by: <a href="https://msehic.com/" target="_blank">M.Šehić</a> <span
-                id="year"></span><br> Licensed under the <a href="https://www.mozilla.org/en-US/MPL/2.0/"
-                target="_blank">Mozilla Public License 2.0</a>
-        </p>
-    </footer>
-    <script src="../js/scripts.js"></script>
+
+        <footer class="app-footer">
+            <p>Developed by <a href="https://msehic.com/" target="_blank">M.Šehić</a> &copy; <span id="year"></span></p>
+            <p class="license-status">Licensed under MPL 2.0</p>
+        </footer>
+    </div>
 </body>
 
 </html>

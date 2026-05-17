@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.popupWidth) document.getElementById('popupWidth').placeholder = data.popupWidth;
         if (data.popupHeight) document.getElementById('popupHeight').placeholder = data.popupHeight;
         const autostartBtn = document.getElementById('autostartButton');
-        if (autostartBtn) autostartBtn.textContent = '✅';
+        if (autostartBtn && data.autostart) autostartBtn.textContent = '✅';
     });
 
     loadLinks();
@@ -35,21 +35,33 @@ document.addEventListener('DOMContentLoaded', () => {
 function saveLink() {
     const nameInput = document.getElementById('urlName');
     const urlInput = document.getElementById('urlInput');
+    const tagInput = document.getElementById('urlTag');
 
     const name = nameInput.value.trim();
     const url = urlInput.value.trim();
+    let tag = tagInput.value.trim().toLowerCase();
 
     if (!url || !isValidURL(url) || !name) {
         alert('Please enter a name and a valid URL.\nFor example:\nGoogle site | https://google.com/');
         return;
     }
 
-    const newLink = { name, url };
+    if (!tag) {
+        try {
+            const urlObj = new URL(url);
+            tag = urlObj.hostname.replace('www.', '').split('.')[0];
+        } catch (e) {
+            tag = 'site';
+        }
+    }
+
+    const newLink = { name, url, tag };
     chrome.runtime.sendMessage({ action: 'saveLink', link: newLink }, response => {
         if (response?.success) {
             loadLinks();
             nameInput.value = '';
             urlInput.value = '';
+            tagInput.value = '';
         } else {
             alert('Failed to save link.');
         }
@@ -73,9 +85,19 @@ function displayLinks(links) {
 
     links.forEach((link, index) => {
         const linkElement = document.createElement('div');
+        linkElement.style.borderBottom = "1px solid #3f4043";
+        linkElement.style.paddingBottom = "10px";
+        linkElement.style.marginBottom = "10px";
 
         const nameEl = document.createElement('p');
         nameEl.textContent = 'Name: ' + link.name;
+        if (link.tag) {
+            const tagSpan = document.createElement('span');
+            tagSpan.className = 'tag-badge';
+            tagSpan.style.marginLeft = "10px";
+            tagSpan.textContent = link.tag;
+            nameEl.appendChild(tagSpan);
+        }
 
         const urlEl = document.createElement('p');
         urlEl.textContent = 'URL: ' + link.url;
@@ -87,7 +109,9 @@ function displayLinks(links) {
 
         const selectButton = document.createElement('button');
         selectButton.className = 'selectButton';
-        selectButton.textContent = 'Select';
+        selectButton.textContent = lastSelectedLink === link.url ? 'Selected' : 'Select';
+        if (lastSelectedLink === link.url) selectButton.disabled = true;
+
         selectButton.dataset.link = link.url;
         selectButton.addEventListener('click', () => {
             if (lastSelectedLink) {
@@ -108,8 +132,6 @@ function displayLinks(links) {
         linkElement.append(nameEl, deleteButton, selectButton, urlEl);
         container.appendChild(linkElement);
     });
-
-    if (links.length === 1) container.querySelector('.selectButton')?.click();
 }
 
 function deleteLink(index) {
@@ -124,10 +146,7 @@ function openLinkInNewWindow(url) {
     chrome.storage.local.get(['popupWidth', 'popupHeight'], ({ popupWidth, popupHeight }) => {
         const width = popupWidth || 800;
         const height = popupHeight || 600;
-
-        const newWindow = window.open(url, '_blank', `width=${width},height=${height},resizable=yes,scrollbars=yes`);
-        if (newWindow) newWindow.focus();
-        else alert('The browser blocked opening a new window. Please allow popups for this site.');
+        window.open(url, '_blank', `width=${width},height=${height},resizable=yes,scrollbars=yes`);
     });
 }
 
@@ -144,7 +163,7 @@ function saveSize() {
         return;
     }
 
-    chrome.storage.local.set({ popupWidth: width, popupHeight: height }, () => console.log('Popup size saved.'));
+    chrome.storage.local.set({ popupWidth: width, popupHeight: height });
     button.textContent = 'Saved';
     setTimeout(() => button.textContent = '🗔 Save size', 2000);
 }
@@ -183,7 +202,7 @@ function importLinks(event) {
             const links = JSON.parse(e.target.result);
             if (!Array.isArray(links)) return alert('Invalid file format.');
 
-            chrome.runtime.sendMessage({ action: 'importLinks', links }, response => {
+            chrome.runtime.sendMessage({ action: 'importLinks', links: links }, response => {
                 if (response?.success) {
                     loadLinks();
                     alert('Links imported successfully.');
