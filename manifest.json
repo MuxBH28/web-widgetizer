@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "WebWidgetizer",
-    "version": "2.0",
+    "version": "2.0.2",
     "description": "Opens specific links in a dedicated popup tab.",
     "author": "M.Šehić",
     "browser_specific_settings": {
